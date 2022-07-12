@@ -1,6 +1,7 @@
 from flask import request
 from application import app, db, socket
 from application.models import User
+from application.auth_utils import create_token
 from flask_socketio import send, emit
 
 
@@ -30,10 +31,25 @@ def login_user():
     if not user:
         return {'success': False, 'message': 'Authentication details were not provided'}, 401
     if user.check_password(password):
-        # TODO implement token auth
-        return 'Token'
+        user_token = create_token(user)
+        return {
+            "success": True,
+            "token": user_token
+        }
 
-
+# TODO implement two namespaces for general and authenticated rooms
 @socket.on('connect')
 def verify_connection(data):
+    if request.headers.get('Authorization'):
+        # TODO perform auth tasks and place in a special room
+        # TODO assign a session id to the db of each authenticated user
+        pass
+    else:
+        # TODO pass anonymous to a general room and load messages
+        pass
+
+
+@socket.on('general_message')
+def broadcast_message(data):
+    # TODO broadcast message and store in db
     pass
