@@ -1,8 +1,9 @@
 from flask import request
 from application import app, db, socket
-from application.models import User
+from application.models import User, Message
 from application.auth_utils import create_token
 from flask_socketio import send, emit
+import json
 
 
 @app.route('/register')
@@ -39,14 +40,15 @@ def login_user():
 
 # TODO implement two namespaces for general and authenticated rooms
 @socket.on('connect')
-def verify_connection(data):
+def verify_connection():
     if request.headers.get('Authorization'):
         # TODO perform auth tasks and place in a special room
         # TODO assign a session id to the db of each authenticated user
         pass
     else:
-        # TODO pass anonymous to a general room and load messages
-        pass
+        session_id = request.sid
+        messages = json.dumps(Message.query.all())
+        # emit('connected',  messages)
 
 
 @socket.on('general_message')
