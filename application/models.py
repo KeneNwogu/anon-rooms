@@ -38,8 +38,25 @@ class Poll(db.Model):
     poll_caption = db.Column(db.Text)
     options = db.relationship('Option', backref='poll', lazy=True)
 
+    @property
+    def total_votes(self):
+        return sum([o.votes for o in self.options])
+
+    def to_dict(self):
+        return {
+            'vote_id': self.id,
+            'options': [o.to_dict() for o in self.options]
+        }
+
 
 class Option(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     poll_id = db.Column(db.Integer, db.ForeignKey('poll.id'))
+    votes = db.Column(db.Integer, default=0)
+
+    def to_dict(self):
+        return {
+            'option_id': self.id,
+            'votes': self.votes
+        }
