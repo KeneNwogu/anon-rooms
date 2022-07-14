@@ -51,6 +51,7 @@ class Poll(db.Model):
 
 class Option(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    image_url = db.Column(db.String(1000), nullable=True)
     name = db.Column(db.String(50))
     poll_id = db.Column(db.Integer, db.ForeignKey('poll.id'))
     votes = db.Column(db.Integer, default=0)
@@ -58,5 +59,6 @@ class Option(db.Model):
     def to_dict(self):
         return {
             'option_id': self.id,
-            'votes': self.votes
+            'votes': self.votes,
+            'image': self.image_url
         }
