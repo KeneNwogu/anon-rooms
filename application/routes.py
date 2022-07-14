@@ -1,9 +1,13 @@
+from datetime import datetime
+
 from flask import request
 from application import app, db, socket
 from application.models import User, Message
 from application.auth_utils import create_token
 from flask_socketio import send, emit
 import json
+
+rooms = []
 
 
 @app.route('/register')
@@ -47,11 +51,18 @@ def verify_connection():
         pass
     else:
         session_id = request.sid
-        messages = json.dumps(Message.query.all())
-        # emit('connected',  messages)
+        rooms.append(session_id)
+        messages = [message.to_dict() for message in Message.query.all()]
+        emit('client_connected',  messages)
 
 
-@socket.on('general_message')
+@socket.on('post_message')
 def broadcast_message(data):
-    # TODO broadcast message and store in db
-    pass
+    # TODO broadcast message and store in db'
+    text_message = data.get('message')
+    twitter_at = data.get('twitter_at')
+    message = Message(text=text_message, twitter_at=twitter_at, timestamp=datetime.utcnow())
+    db.session.add(message)
+    db.session.commit()
+
+    emit('general_message', message.to_dict(), broadcast=True)

@@ -22,4 +22,24 @@ class Message(db.Model):
     text = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
-                        nullable=False)
+                        nullable=True)
+    twitter_at = db.Column(db.Boolean, nullable=True)
+
+    def to_dict(self):
+        return {
+            "message": self.text,
+            "timestamp": self.timestamp.strftime('%d/%m/%Y, %H:%M:%S'),
+            "twitter_at": True if self.twitter_at else False
+        }
+
+
+class Poll(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    poll_caption = db.Column(db.Text)
+    options = db.relationship('Option', backref='poll', lazy=True)
+
+
+class Option(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    poll_id = db.Column(db.Integer, db.ForeignKey('poll.id'))

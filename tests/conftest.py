@@ -20,9 +20,10 @@ def connect_client(client):
 def client():
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('TEST_DATABASE_URI')
+    db.drop_all()
     db.create_all()
     test_client = socket.test_client(app)
     test_client.connect()
-
     yield test_client
     db.drop_all()
+    test_client.disconnect()
