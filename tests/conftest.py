@@ -22,8 +22,7 @@ def client():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('TEST_DATABASE_URI')
     db.drop_all()
     db.create_all()
-    test_client = socket.test_client(app)
-    test_client.connect()
+    test_client = socket.test_client(app, namespace='/public')  # PublicNamespace client
     yield test_client
     db.drop_all()
-    test_client.disconnect()
+    test_client.disconnect(namespace='/public')

@@ -5,6 +5,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -18,3 +19,6 @@ db = SQLAlchemy(app)
 socket = SocketIO(app)
 
 from application import routes
+from application.public_namespace import PublicNamespace
+
+# socket.on_namespace(PublicNamespace('/public'))

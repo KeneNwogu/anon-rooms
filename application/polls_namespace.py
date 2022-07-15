@@ -4,7 +4,7 @@ from application import db
 from application.models import Option, Poll
 
 
-class PollsNamespace(Namespace):
+class PublicPollsNamespace(Namespace):
     def on_connect(self):
         # load polls
         polls = [poll.to_dict() for poll in Poll.query.all()]
