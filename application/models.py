@@ -16,6 +16,13 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def to_dict(self):
+        return {
+            "user_id": self.id,
+            "username": self.username,
+            "session_id": self.session_id
+        }
+
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)

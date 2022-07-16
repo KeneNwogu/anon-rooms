@@ -1,5 +1,7 @@
 from functools import wraps
 from flask import request
+import jwt
+from application import app
 
 
 class AuthError(Exception):
@@ -9,7 +11,9 @@ class AuthError(Exception):
 
 
 def create_token(user):
-    pass
+    payload = user.to_dict()
+    token = jwt.encode(payload, app.config.get('SECRET_KEY'), "HS256")
+    return token
 
 
 def get_auth_token_header():
@@ -28,12 +32,10 @@ def verify_token(token):
     pass
 
 
-def login_required():
-    def login_required_decorator(f):
-        @wraps(f)
-        def wrapper(*args, **kwargs):
-            token = get_auth_token_header()
-            # TODO verify token
-            return f(*args, **kwargs)
-        return wrapper
+def login_required(f):
+    @wraps(f)
+    def login_required_decorator(*args, **kwargs):
+        token = get_auth_token_header()
+        payload = jwt.decode(token, app.config.get('SECRET_KEY'), 'HS256')
+        return f(payload, *args, **kwargs)
     return login_required_decorator
