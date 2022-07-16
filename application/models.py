@@ -5,10 +5,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(12), nullable=False)
+    username = db.Column(db.String(12), nullable=False, unique=True)
     session_id = db.Column(db.String(50), nullable=True)
     messages = db.relationship('Message', backref='receiver', lazy=True)
     password_hash = db.Column(db.String(120), nullable=False)
+    active_now = db.Column(db.Boolean, nullable=False, default=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -20,7 +21,8 @@ class User(db.Model):
         return {
             "user_id": self.id,
             "username": self.username,
-            "session_id": self.session_id
+            "session_id": self.session_id,
+            "active_now": self.active_now
         }
 
 

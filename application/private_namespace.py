@@ -15,7 +15,9 @@ class PrivateNamespace(Namespace):
         # store new session id back to logged in user
         user = User.query.get(int(payload.get('user_id')))
         user.session_id = request.sid
+        user.active_now = True
         db.session.commit()
+        # TODO retrieve only recently received messages and load older ones when client requests
         messages = [message.to_dict() for message in user.messages]
 
         # client event to load messages after connection
@@ -32,7 +34,7 @@ class PrivateNamespace(Namespace):
             db.session.add(message)
             db.session.commit()
             if receiver.session_id:
-                emit('received_message', message.to_dict(), room=receiver.session_id)
+                emit('received_message', message.to_dict(), room=receiver.session_id, namespace=self.namespace)
             else:
                 # TODO store in redis cache
                 pass
@@ -42,5 +44,6 @@ class PrivateNamespace(Namespace):
         session_id = request.sid
         disconnected_user = User.query.filter_by(session_id=session_id).first()
         if disconnected_user:
-            # set user as disconnected
-            pass
+            disconnected_user.active_now = False
+            db.session.commit()
+            emit('user_disconnected', disconnected_user.to_dict(), broadcast=True, namespace='/public')
