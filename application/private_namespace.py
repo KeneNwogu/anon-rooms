@@ -1,8 +1,7 @@
-from datetime import datetime
-
+import json
 from flask_socketio import Namespace, emit
 from flask import request
-from application import db
+from application import db, redis_db
 from application.auth_utils import login_required
 from application.models import User, Message
 
@@ -16,9 +15,10 @@ class PrivateNamespace(Namespace):
         payload = kwargs['payload']
         user = User.query.get(int(payload.get('user_id')))
         if user.session_id:
-            # TODO if user has logged in before, reset session id and load only recent messages
-            messages = []
-            pass
+            # TODO if user has logged in before, load only recent messages
+            user_id = f'user:{user.id}'
+            messages = json.loads(redis_db.lrange(user_id, 0, -1))
+            # create pipeline for race condition
         else:
             messages = [message.to_dict() for message in user.messages]
 

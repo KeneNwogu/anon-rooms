@@ -1,9 +1,9 @@
+import json
 from datetime import datetime
-
 from flask import request
 from flask_socketio import Namespace, emit
 
-from application import db, socket
+from application import db, redis_db
 from application.models import Message, User
 
 
@@ -39,5 +39,8 @@ class PublicNamespace(Namespace):
                 emit('received_private_message', message.to_dict(), room=receiver.session_id, namespace='/private')
             else:
                 # TODO store in redis cache
-                pass
-        pass
+                serialized_message = json.dumps(message.to_dict())
+                redis_db.lpush(f'user:{receiver.id}', serialized_message)
+
+        else:
+            return False

@@ -4,7 +4,9 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
+import redis
 
+redis_db = redis.Redis(db=1)
 
 load_dotenv()
 
@@ -20,5 +22,3 @@ socket = SocketIO(app)
 
 from application import routes
 from application.public_namespace import PublicNamespace
-
-# socket.on_namespace(PublicNamespace('/public'))
