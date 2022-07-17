@@ -1,3 +1,4 @@
+import datetime
 from functools import wraps
 from flask import request
 import jwt
@@ -12,6 +13,8 @@ class AuthError(Exception):
 
 def create_token(user):
     payload = user.to_dict()
+    payload['exp'] = datetime.datetime.utcnow() + datetime.timedelta(minutes=720)
+    payload['iat'] = datetime.datetime.utcnow()
     token = jwt.encode(payload, app.config.get('SECRET_KEY'), "HS256")
     return token
 
@@ -37,5 +40,6 @@ def login_required(f):
     def login_required_decorator(*args, **kwargs):
         token = get_auth_token_header()
         payload = jwt.decode(token, app.config.get('SECRET_KEY'), 'HS256')
-        return f(payload, *args, **kwargs)
+        kwargs['payload'] = payload
+        return f(*args, **kwargs)
     return login_required_decorator

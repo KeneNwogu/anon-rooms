@@ -7,9 +7,10 @@ from application import app, db, socket
 from application.auth_utils import create_token
 from application.models import User, Message
 from application.polls_namespace import PublicPollsNamespace
+from application.private_namespace import PrivateNamespace
 from application.public_namespace import PublicNamespace
 
-
+socket.on_namespace(PrivateNamespace('/private'))
 socket.on_namespace(PublicNamespace('/public'))
 # socket.on_namespace(PublicPollsNamespace('/public-polls'))
 

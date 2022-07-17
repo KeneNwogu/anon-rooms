@@ -11,8 +11,9 @@ class PrivateNamespace(Namespace):
     namespace = '/private'
 
     @login_required
-    def on_connect(self, payload):
+    def on_connect(self, **kwargs):
         # store new session id back to logged in user
+        payload = kwargs['payload']
         user = User.query.get(int(payload.get('user_id')))
         user.session_id = request.sid
         user.active_now = True

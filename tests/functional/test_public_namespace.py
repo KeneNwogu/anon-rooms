@@ -14,13 +14,8 @@ def test_connection(public_client):
 def test_public_messages(public_client):
     message_text = 'Hello World - public message'
     public_client.emit('broadcast_message', {'message': message_text, 'twitter_at': False}, namespace='/public')
-    # check that message was stored on the db
-    message = list(Message.query.filter_by(text=message_text))
-    assert 1 == len(message)
-    del message
 
-    # data = client.get_received(namespace='/public')
-    # print(data)
-    # assert data.get('message') == message_text
+    data = public_client.get_received(namespace='/public')
+    assert data[0].get('args')[0].get('message') == message_text
 
 

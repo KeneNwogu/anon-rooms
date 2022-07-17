@@ -29,7 +29,9 @@ def private_client():
     db.drop_all()
     db.create_all()
     # create test user
+    test_password = 'password'
     user = User(username='test_user')
+    user.set_password(test_password)
     db.session.add(user)
     db.session.commit()
     token = create_token(user)
