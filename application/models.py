@@ -44,7 +44,7 @@ class Message(db.Model):
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    poll_caption = db.Column(db.Text)
+    caption = db.Column(db.Text)
     options = db.relationship('Option', backref='poll', lazy=True)
 
     @property
@@ -60,7 +60,7 @@ class Poll(db.Model):
 
 class Option(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    image_url = db.Column(db.String(1000), nullable=True)
+    image_url = db.Column(db.Text, nullable=True)
     name = db.Column(db.String(50))
     poll_id = db.Column(db.Integer, db.ForeignKey('poll.id'))
     votes = db.Column(db.Integer, default=0)

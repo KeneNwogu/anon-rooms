@@ -12,7 +12,7 @@ from application.public_namespace import PublicNamespace
 
 socket.on_namespace(PrivateNamespace('/private'))
 socket.on_namespace(PublicNamespace('/public'))
-# socket.on_namespace(PublicPollsNamespace('/public-polls'))
+socket.on_namespace(PublicPollsNamespace('/polls'))
 
 
 @app.route('/register')

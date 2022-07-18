@@ -20,8 +20,8 @@ def public_client():
     db.create_all()
     public_test_client = socket.test_client(app, namespace='/public')  # PublicNamespace client
     yield public_test_client
-    db.drop_all()
     public_test_client.disconnect(namespace='/public')
+    db.drop_all()
 
 
 @pytest.fixture(scope='module')
@@ -38,5 +38,5 @@ def private_client():
     headers = {'Authorization': f'Bearer {token}'}
     private_test_client = socket.test_client(app, namespace='/private', headers=headers)  # PrivateNamespace client
     yield private_test_client
-    db.drop_all()
     private_test_client.disconnect(namespace='/private')
+    db.drop_all()

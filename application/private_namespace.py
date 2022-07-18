@@ -15,10 +15,9 @@ class PrivateNamespace(Namespace):
         payload = kwargs['payload']
         user = User.query.get(int(payload.get('user_id')))
         if user.session_id:
-            # TODO if user has logged in before, load only recent messages
             user_id = f'user:{user.id}'
             messages = json.loads(redis_db.lrange(user_id, 0, -1))
-            # create pipeline for race condition
+            # TODO create pipeline for race condition before deleting redis cache
         else:
             messages = [message.to_dict() for message in user.messages]
 
@@ -27,7 +26,6 @@ class PrivateNamespace(Namespace):
         db.session.commit()
         # client event to load messages after connection
         emit('client_connected', messages, namespace=self.namespace, room=user.session_id)
-
 
     def on_disconnect(self):
         session_id = request.sid

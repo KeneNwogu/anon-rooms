@@ -3,4 +3,4 @@ def test_connect(private_client):
 
 
 def test_receiving_messages_event(public_client, private_client):
-    pass
+    assert 1 == 1

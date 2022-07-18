@@ -31,7 +31,8 @@ class PublicNamespace(Namespace):
         if receiver:
             text_message = data.get('message')
             twitter_at = data.get('twitter_at')
-            message = Message(text=text_message, twitter_at=twitter_at, timestamp=datetime.utcnow(), user_id=receiver)
+            message = Message(text=text_message, twitter_at=twitter_at, timestamp=datetime.utcnow(),
+                              user_id=receiver.id)
             db.session.add(message)
             db.session.commit()
             if receiver.active_now:
