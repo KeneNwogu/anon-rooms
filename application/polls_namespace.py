@@ -1,6 +1,7 @@
 from flask_socketio import Namespace, emit
 
 from application import db
+from application.errors import ValidationError
 from application.models import Option, Poll
 
 
@@ -26,8 +27,7 @@ class PublicPollsNamespace(Namespace):
         poll_name = data.get('caption')
         with db.session.begin():
             if not poll_name:
-                # TODO create socket error event
-                return
+                raise ValidationError(error='Poll name can not be null')
             poll = Poll(caption=poll_name)
             db.session.add(poll)
             db.session.flush()
@@ -36,14 +36,12 @@ class PublicPollsNamespace(Namespace):
                 # TODO upload image
                 image_url = None
                 if not o.get('name'):
-                    # TODO create socket error event
-                    return
+                    raise ValidationError(error='Option name can not be null')
                 try:
                     option = Option(name=o.get('name'), poll_id=poll_id, image_url=image_url)
                     db.session.add(option)
                 except Exception:
-                    # TODO create socket error event
-                    return
+                    raise ValidationError(error='An unknown exception occurred')
             db.session.commit()
             vote = Poll.query.get(int(poll_id))
             emit('new_vote', vote.to_dict(), namespace=self.namespace)

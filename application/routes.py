@@ -47,3 +47,8 @@ def login_user():
             "token": user_token
         }
 
+
+@socket.on_error_default
+def default_error_handler(e):
+    session_id = request.sid
+    emit('error', {'error': e.error}, to=session_id)
