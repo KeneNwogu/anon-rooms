@@ -48,6 +48,10 @@ def login_user():
         }
 
 
+@app.route('/poll', methods=['POST'])
+def create_poll():
+    data = request.form
+
 @socket.on_error_default
 def default_error_handler(e):
     session_id = request.sid

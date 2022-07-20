@@ -17,12 +17,10 @@ class PublicPollsNamespace(Namespace):
         options = data.get('options')
 
         if type(options) != list:
-            # TODO create socket error event
-            return
+            raise ValidationError(error='Options should be a list')
 
         if len(options) > 4:
-            # TODO create socket error event
-            return
+            raise ValidationError(error='Options can not be greater than four')
 
         poll_name = data.get('caption')
         with db.session.begin():
